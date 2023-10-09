@@ -1,7 +1,7 @@
 import "./App.css";
 import { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Table from 'react-bootstrap/Table';
+import Table from "react-bootstrap/Table";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import axios from "axios";
@@ -18,13 +18,18 @@ function App() {
     setCantidad("");
   };
 
-  function ver() {
-    axios
-      .get("https://sheet.best/api/sheets/2ac1bbad-b4f9-42e6-a015-a1104f02e7df")
-      .then((res) => {
-        setLista(res.data);
-      });
-  }
+  function getData(){
+    axios.get("https://script.google.com/macros/s/AKfycbx4i5NY8tMytoUzLfZnLDffUtNuJGf1JLRxfn6hpuqSXqUSUklBg9fxt6NDwTuDgGbc/exec")
+    .then((res) => {
+      const datos = res.data;
+      console.log("Datos obtenidos:", datos);
+      setLista(datos);
+    })
+    .catch((error) => {
+      console.error("Error al obtener los datos:", error);
+    });
+  };
+
 
   const agregar = () => {
     const datos = {
@@ -32,10 +37,11 @@ function App() {
       Cantidad,
     };
 
-    axios.post(
-      "https://sheet.best/api/sheets/2ac1bbad-b4f9-42e6-a015-a1104f02e7df",
-      datos
-    )
+    axios
+      .post(
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ6ecWQd4niERCO3Az6GjteTRt3-YMZZ2ZafUc0CK9lZK44WrWFnoSN8LyCbfjSLkP1ufGacGWuKXu6/pub?gid=0&single=true&output=csv",
+        datos,
+      )
       .then(() => {
         limpiarInput();
         notificacion.fire({
@@ -44,7 +50,7 @@ function App() {
           icon: "success",
         });
         limpiarInput();
-        ver();
+        getData();
       })
       .catch((error) => {
         Swal.fire({
@@ -55,8 +61,6 @@ function App() {
         });
       });
   };
-
-  
 
   return (
     <main className="container">
@@ -102,7 +106,7 @@ function App() {
           <button className="btn btn-success m-2" onClick={agregar}>
             Registrar
           </button>
-          <button className="btn btn-success" onClick={ver}>
+          <button className="btn btn-success" onClick={getData}>
             Ver Datos
           </button>
         </div>
@@ -116,14 +120,13 @@ function App() {
           </tr>
         </thead>
         <tbody>
-          {listaEmpleados.map((valor) => {
-            return (
-              <tr className="text-center" key={valor.Producto}>
-                <td>{valor.Producto}</td>
-                <td>{valor.Cantidad}</td>
-              </tr>
-            );
-          })}
+          {listaEmpleados.map((fila, index) => (
+            <tr className="text-center" key={index}>
+              {fila.map((valor, subIndex) => (
+                <td key={subIndex}>{valor}</td>
+              ))}
+            </tr>
+          ))}
         </tbody>
       </Table>
     </main>
