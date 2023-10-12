@@ -4,13 +4,13 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Table from "react-bootstrap/Table";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import axios from "axios";
+import { supabase } from "./supabase/client";
 
 const notificacion = withReactContent(Swal);
 
 function App() {
-  const [Producto, setProducto] = useState("");
-  const [Cantidad, setCantidad] = useState();
+  const [producto, setProducto] = useState("");
+  const [cantidad, setCantidad] = useState();
   const [listaEmpleados, setLista] = useState([]);
 
   const limpiarInput = () => {
@@ -18,49 +18,48 @@ function App() {
     setCantidad("");
   };
 
-  function getData(){
-    axios.get("https://script.google.com/macros/s/AKfycbx4i5NY8tMytoUzLfZnLDffUtNuJGf1JLRxfn6hpuqSXqUSUklBg9fxt6NDwTuDgGbc/exec")
-    .then((res) => {
-      const datos = res.data;
-      console.log("Datos obtenidos:", datos);
-      setLista(datos);
-    })
-    .catch((error) => {
-      console.error("Error al obtener los datos:", error);
-    });
-  };
+  async function getData() {
+    try {
+      const result = await supabase.from("Productos").select("*");
+      if (result.error) throw result.error;
+      if (result.data != null) {
+        console.log("Datos obtenidos:", result.data);
+        setLista(result.data);
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  }
 
-
-  const agregar = () => {
+  async function agregar() {
     const datos = {
-      Producto,
-      Cantidad,
+      producto,
+      cantidad,
     };
 
-    axios
-      .post(
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ6ecWQd4niERCO3Az6GjteTRt3-YMZZ2ZafUc0CK9lZK44WrWFnoSN8LyCbfjSLkP1ufGacGWuKXu6/pub?gid=0&single=true&output=csv",
-        datos,
-      )
-      .then(() => {
-        limpiarInput();
-        notificacion.fire({
-          title: <p>Registo exitoso!</p>,
-          html: `<i>El producto <b>${Producto}</b> fue registrado con exito</i>`,
-          icon: "success",
-        });
-        limpiarInput();
-        getData();
-      })
-      .catch((error) => {
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "No se logro registrar el producto!",
-          footer: JSON.parse(JSON.stringify(error)).message,
-        });
+    try {
+      const { data, error } = await supabase
+        .from("Productos")
+        .insert(datos)
+        .select();
+      if (error) throw error;
+      limpiarInput();
+      notificacion.fire({
+        title: <p>Registro exitoso!</p>,
+        html: `<i>El producto <b>${producto}</b> fue registrado con éxito</i>`,
+        icon: "success",
       });
-  };
+      limpiarInput();
+      getData();
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "No se logró registrar el producto!",
+        footer: JSON.parse(JSON.stringify(error)).message,
+      });
+    }
+  }
 
   return (
     <main className="container">
@@ -78,7 +77,7 @@ function App() {
                 setProducto(e.target.value);
               }}
               className="form-control"
-              value={Producto}
+              value={producto}
               placeholder="Collar de perlas..."
               aria-label="Username"
               aria-describedby="basic-addon1"
@@ -95,7 +94,7 @@ function App() {
                 setCantidad(e.target.value);
               }}
               className="form-control"
-              value={Cantidad}
+              value={cantidad}
               placeholder="15..."
               aria-label="Username"
               aria-describedby="basic-addon1"
@@ -115,16 +114,17 @@ function App() {
       <Table responsive striped bordered hover className="mt-4">
         <thead className="thead-dark">
           <tr className="text-center">
+            <th scope="col">#Id</th>
             <th scope="col">Producto</th>
             <th scope="col">Cantidad</th>
           </tr>
         </thead>
         <tbody>
-          {listaEmpleados.map((fila, index) => (
-            <tr className="text-center" key={index}>
-              {fila.map((valor, subIndex) => (
-                <td key={subIndex}>{valor}</td>
-              ))}
+          {listaEmpleados.map((product) => (
+            <tr className="text-center" key={product.id}>
+              <th scope="row">{product.id}</th>
+              <td>{product.producto}</td>
+              <td>{product.cantidad}</td>
             </tr>
           ))}
         </tbody>
