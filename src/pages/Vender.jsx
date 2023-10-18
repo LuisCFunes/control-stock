@@ -1,56 +1,66 @@
-import "./App.css";
-import { useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import Table from "react-bootstrap/Table";
-import Swal from "sweetalert2";
+import Table from "react-bootstrap/esm/Table";
+import { supabase } from "../supabase/client";
+import OrdenarLista from "../utilities/ordenarLista";
+import { useEffect, useState } from "react";
 import withReactContent from "sweetalert2-react-content";
-import { supabase } from "./supabase/client";
-import OrdenarLista from "./utilities/ordenarLista";
+import Swal from "sweetalert2";
 
-function App() {
+export default function Vender() {
   const [producto, setProducto] = useState();
   const [cantidad, setCantidad] = useState();
+  const [cantidadVender, setCantidadVender] = useState();
+  const [id, setId] = useState();
   const [listaEmpleados, setLista] = useState([]);
+  const [editar, setEditar] = useState(false);
+  let cVender = 0;
 
   const limpiarInput = () => {
+    setEditar(false);
     setProducto("");
     setCantidad("");
+    setCantidadVender("");
   };
 
-  async function getData() {
-    try {
-      const { data, error } = await supabase.from("Productos").select("*");
-      if (error) throw error;
-      if (data != null) {
-        setLista(OrdenarLista(data));
+  useEffect(()=>{
+    async function fetchData() {
+      try {
+        const { data, error } = await supabase.from("Productos").select("*");
+        if (error) throw error;
+        if (data != null) {
+          setLista(OrdenarLista(data));
+        }
+      } catch (error) {
+        alert(error.message);
       }
-    } catch (error) {
-      alert(error.message);
     }
-  }
 
-  async function putData() {
-    const datos = {
-      producto,
-      cantidad,
-    };
+    fetchData();
+  },[])
 
-    if (datos.producto === "" && datos.cantidad === "") {
-      alert("Llena el formulario");
+  async function updateData() {
+    if (cantidadVender > cantidad) {
+      alert("La cantidad que quieres vender es mayor a la que hay en stock");
       return;
+    } else {
+      cVender = cantidad - cantidadVender;
     }
-
     try {
-      const { error } = await supabase.from("Productos").insert(datos).select();
+      const { error } = await supabase
+        .from("Productos")
+        .update({
+          id: id,
+          producto: producto,
+          cantidad: cVender,
+        })
+        .eq("id", id)
+        .select();
       if (error) throw error;
-      limpiarInput();
       withReactContent(Swal).fire({
-        title: <p>Registro exitoso!</p>,
-        html: `<i>El producto <b>${producto}</b> fue registrado con éxito</i>`,
+        title: <p>Actualizado con exito!</p>,
         icon: "success",
       });
       limpiarInput();
-      getData();
+      setEditar(false);
     } catch (error) {
       Swal.fire({
         icon: "error",
@@ -60,6 +70,13 @@ function App() {
       });
     }
   }
+
+  const editarProducto = (product) => {
+    setEditar(true);
+    setId(product.id);
+    setProducto(product.producto);
+    setCantidad(product.cantidad);
+  };
 
   return (
     <main className="container">
@@ -84,15 +101,15 @@ function App() {
           </div>
           <div className="input-group mb-3">
             <span className="input-group-text" id="basic-addon1">
-              Cantidad:
+              Cantidad a vender:
             </span>
             <input
               type="number"
               onChange={(e) => {
-                setCantidad(e.target.value);
+                setCantidadVender(e.target.value);
               }}
               className="form-control"
-              value={cantidad}
+              value={cantidadVender}
               placeholder="15..."
               aria-label="Username"
               aria-describedby="basic-addon1"
@@ -100,17 +117,16 @@ function App() {
           </div>
         </div>
         <div className="card-footer text-body-secondary">
-          <div>
-            <button className="btn btn-success m-2" onClick={putData}>
-              Registrar
-            </button>
-            <button className="btn btn-success m-2  " onClick={getData}>
-              Ver Datos
-            </button>
-            <button className="btn btn-success" onClick={getData}>
-              Vender
-            </button>
-          </div>
+          {editar ? (
+            <div>
+              <button className="btn btn-warning m-2" onClick={updateData}>
+                Actualizar
+              </button>
+              <button className="btn btn-info m-2" onClick={limpiarInput}>
+                Cancelar
+              </button>
+            </div>
+          ) : null}
         </div>
       </div>
 
@@ -120,6 +136,7 @@ function App() {
             <th scope="col">#Id</th>
             <th scope="col">Producto</th>
             <th scope="col">Cantidad</th>
+            <th scope="col">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -128,6 +145,23 @@ function App() {
               <th scope="row">{product.id}</th>
               <td>{product.producto}</td>
               <td>{product.cantidad}</td>
+              <td>
+                <div
+                  className="btn-group"
+                  role="group"
+                  aria-label="Basic example"
+                >
+                  <button
+                    type="button"
+                    onClick={() => {
+                      editarProducto(product);
+                    }}
+                    className="btn btn-info"
+                  >
+                    Vender
+                  </button>
+                </div>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -135,5 +169,3 @@ function App() {
     </main>
   );
 }
-
-export default App;
