@@ -21,21 +21,17 @@ export default function Vender() {
     setCantidadVender("");
   };
 
-  useEffect(()=>{
-    async function fetchData() {
-      try {
-        const { data, error } = await supabase.from("Productos").select("*");
-        if (error) throw error;
-        if (data != null) {
-          setLista(OrdenarLista(data));
-        }
-      } catch (error) {
-        alert(error.message);
+  async function fetchData() {
+    try {
+      const { data, error } = await supabase.from("Productos").select("*");
+      if (error) throw error;
+      if (data != null) {
+        setLista(OrdenarLista(data));
       }
+    } catch (error) {
+      alert(error.message);
     }
-
-    fetchData();
-  },[])
+  }
 
   async function updateData() {
     if (cantidadVender > cantidad) {
@@ -60,6 +56,7 @@ export default function Vender() {
         icon: "success",
       });
       limpiarInput();
+      fetchData();
       setEditar(false);
     } catch (error) {
       Swal.fire({
@@ -78,10 +75,11 @@ export default function Vender() {
     setCantidad(product.cantidad);
   };
 
+  fetchData();
+
   return (
     <main className="container">
       <div className="card text-center">
-        <div className="card-header">Gestion de Inventario</div>
         <div className="card-body">
           <div className="input-group mb-3">
             <span className="input-group-text" id="basic-addon1">
