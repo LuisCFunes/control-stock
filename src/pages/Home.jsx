@@ -1,33 +1,19 @@
-import "../App.css";
-import { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Table } from "react-bootstrap";
+import { useState } from "react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import "../App.css";
+import { ListProducts } from "../components/ListProducts";
 import { supabase } from "../supabase/client";
-import OrdenarLista from "../utilities/ordenarLista";
 
 export default function Home() {
-  const [producto, setProducto] = useState();
+  const [producto, setProducto] = useState("");
   const [cantidad, setCantidad] = useState();
-  const [listaEmpleados, setLista] = useState([]);
 
   const limpiarInput = () => {
     setProducto("");
     setCantidad("");
   };
-
-  async function getData() {
-    try {
-      const { data, error } = await supabase.from("Productos").select("*");
-      if (error) throw error;
-      if (data != null) {
-        setLista(OrdenarLista(data));
-      }
-    } catch (error) {
-      alert(error.message);
-    }
-  }
 
   async function putData() {
     const datos = {
@@ -50,7 +36,6 @@ export default function Home() {
         icon: "success",
       });
       limpiarInput();
-      getData();
     } catch (error) {
       Swal.fire({
         icon: "error",
@@ -103,31 +88,11 @@ export default function Home() {
             <button className="btn btn-success m-2" onClick={putData}>
               Registrar
             </button>
-            <button className="btn btn-success m-2  " onClick={getData}>
-              Ver Datos
-            </button>
           </div>
         </div>
       </div>
 
-      <Table responsive striped bordered hover className="mt-4">
-        <thead className="thead-dark">
-          <tr className="text-center">
-            <th scope="col">#Id</th>
-            <th scope="col">Producto</th>
-            <th scope="col">Cantidad</th>
-          </tr>
-        </thead>
-        <tbody>
-          {listaEmpleados.map((product) => (
-            <tr className="text-center" key={product.id}>
-              <th scope="row">{product.id}</th>
-              <td>{product.producto}</td>
-              <td>{product.cantidad}</td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+      <ListProducts />
     </main>
   );
 }
