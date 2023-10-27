@@ -19,7 +19,7 @@ export const useData = () => {
     }
 
     fetchDataAndSetList();
-  }, [listProducts]);
+  }, []);
 
   return { listProducts, error };
 };

@@ -1,16 +1,22 @@
-import { supabase } from "../supabase/client";
-import { useState } from "react";
-import withReactContent from "sweetalert2-react-content";
+import {  useState } from "react";
 import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+import { supabase } from "../supabase/client";
+import ProductCount from "../components/ProductCount";
 import { useData } from "../hooks/useData";
-import { ListProducts } from "../components/ListProducts";
 
 export default function Vender() {
-  const [producto, setProducto] = useState();
-  const [cantidad, setCantidad] = useState();
-  const [id, setId] = useState();
 
   const { listProducts } = useData();
+  const [cantidad, setCantidad] = useState(0);
+  const [producto, setProducto] = useState("");
+  const [id, setId] = useState("");
+
+  const handleSendProductData = (data) => {
+    setId(data.id);
+    setProducto(data.producto);
+    setCantidad(parseInt(data.cantidad));
+  };
 
   async function updateData() {
     try {
@@ -41,11 +47,38 @@ export default function Vender() {
 
   return (
     <main className="container">
-      <label className="text-center blond fs-4">
-        Lista de Productos a Vender
-      </label>
-
-      <ListProducts />
+      <ProductCount id={id} p={producto}/>
+      <table className="table table-sm bordered">
+        <thead className="table-dark">
+          <tr className="text-center">
+            <th scope="col">#Id</th>
+            <th scope="col">Producto</th>
+            <th scope="col">Cantidad</th>
+            <th className="w-50" scope="col">
+              Agregar a la venta
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {listProducts.map((product) => (
+            <tr className="text-center" key={product.id}>
+              <th scope="row">{product.id}</th>
+              <td scope="row">{product.producto}</td>
+              <td scope="row">{product.cantidad}</td>
+              <td scope="row">
+                <button
+                  className="btn btn-primary btn-sm m-0 rounded-0"
+                  onClick={() => {
+                    handleSendProductData(product);
+                  }}
+                >
+                  Vender
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </main>
   );
 }

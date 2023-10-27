@@ -1,4 +1,3 @@
-import Table from "react-bootstrap/esm/Table";
 import { useData } from "../hooks/useData";
 import Swal from "sweetalert2";
 
@@ -6,8 +5,8 @@ export const ListProducts = () => {
   const { listProducts, error } = useData();
 
   return (
-    <Table responsive striped bordered hover className="mt-4">
-      <thead className="thead-dark">
+    <table className="table bordered mt-4">
+      <thead className="table-dark">
         <tr className="text-center">
           <th scope="col">#Id</th>
           <th scope="col">Producto</th>
@@ -30,6 +29,6 @@ export const ListProducts = () => {
           </tr>
         ))}
       </tbody>
-    </Table>
+    </table>
   );
 };
