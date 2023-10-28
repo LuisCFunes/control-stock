@@ -6,7 +6,7 @@ import ProductCount from "../components/ProductCount";
 import { useData } from "../hooks/useData";
 
 export default function Vender() {
-
+  
   const { listProducts } = useData();
   const [cantidad, setCantidad] = useState(0);
   const [producto, setProducto] = useState("");

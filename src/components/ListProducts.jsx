@@ -1,8 +1,10 @@
-import { useData } from "../hooks/useData";
 import Swal from "sweetalert2";
 
-export const ListProducts = () => {
-  const { listProducts, error } = useData();
+export const ListProducts = ({list}) => {
+
+  if (!list || list.length === 0) {
+    return <h1 className="text-center">No hay productos en la lista</h1>;
+  }
 
   return (
     <table className="table bordered mt-4">
@@ -14,14 +16,7 @@ export const ListProducts = () => {
         </tr>
       </thead>
       <tbody>
-        {error &&
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "No se logró registrar el producto!",
-            footer: JSON.parse(JSON.stringify(error)).message,
-          })}
-        {listProducts.map((product) => (
+        {list.map((product) => (
           <tr className="text-center" key={product.id}>
             <th scope="row">{product.id}</th>
             <td>{product.producto}</td>

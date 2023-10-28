@@ -5,10 +5,12 @@ import withReactContent from "sweetalert2-react-content";
 import "../App.css";
 import { ListProducts } from "../components/ListProducts";
 import { supabase } from "../supabase/client";
+import { useData } from "../hooks/useData";
 
 export default function Home() {
   const [producto, setProducto] = useState("");
   const [cantidad, setCantidad] = useState();
+  const { listProducts, error } = useData();
 
   const limpiarInput = () => {
     setProducto("");
@@ -91,7 +93,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <ListProducts />
+      <ListProducts list={listProducts} error={error} />
     </main>
   );
 }
