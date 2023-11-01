@@ -1,6 +1,6 @@
 import Vender from "./pages/Vender";
 import Home from "./pages/Home";
-import Carrito from "./pages/Cart";
+import Facturar from "./pages/Facturar";
 import Navigation from "./components/Navbar";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useState } from "react";
@@ -30,7 +30,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/Vender" element={<Vender />} />
-            <Route path="/Carrito" element={<Carrito />} />
+            <Route path="/Facturar" element={<Facturar />} />
           </Routes>
         </BrowserRouter>
       </CartContext.Provider>

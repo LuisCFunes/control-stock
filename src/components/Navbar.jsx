@@ -16,7 +16,7 @@ export default function Navigation() {
             <Link to="/Vender">Vender</Link>
           </Nav.Link>
           <Nav.Link>
-            <Link to="/Carrito">Carrito</Link>
+            <Link to="/Facturar">Facturar</Link>
           </Nav.Link>
           <Nav.Link href="#pricing">Editar</Nav.Link>
         </Nav>
