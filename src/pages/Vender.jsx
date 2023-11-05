@@ -9,6 +9,7 @@ export default function Vender() {
   
   const { listProducts } = useData();
   const [cantidad, setCantidad] = useState(0);
+  const [precio, setPrecio] = useState(0);
   const [producto, setProducto] = useState("");
   const [id, setId] = useState("");
 
@@ -16,6 +17,7 @@ export default function Vender() {
     setId(data.id);
     setProducto(data.producto);
     setCantidad(parseInt(data.cantidad));
+    setPrecio(data.precio);
   };
 
   async function updateData() {
@@ -47,13 +49,14 @@ export default function Vender() {
 
   return (
     <main className="container">
-      <ProductCount id={id} p={producto}/>
+      <ProductCount id={id} p={producto} pr={precio}/>
       <table className="table table-sm bordered">
         <thead className="table-dark">
           <tr className="text-center">
             <th scope="col">#Id</th>
             <th scope="col">Producto</th>
             <th scope="col">Cantidad</th>
+            <th scope="col">Precio</th>
             <th className="w-50" scope="col">
               Agregar a la venta
             </th>
@@ -65,6 +68,7 @@ export default function Vender() {
               <th scope="row">{product.id}</th>
               <td scope="row">{product.producto}</td>
               <td scope="row">{product.cantidad}</td>
+              <td scope="row">{product.precio}</td>
               <td scope="row">
                 <button
                   className="btn btn-primary btn-sm m-0 rounded-0"

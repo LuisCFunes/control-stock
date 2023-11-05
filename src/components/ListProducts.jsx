@@ -1,5 +1,3 @@
-import Swal from "sweetalert2";
-
 export const ListProducts = ({list}) => {
 
   if (!list || list.length === 0) {
@@ -13,6 +11,7 @@ export const ListProducts = ({list}) => {
           <th scope="col">#Id</th>
           <th scope="col">Producto</th>
           <th scope="col">Cantidad</th>
+          <th scope="col">Precio</th>
         </tr>
       </thead>
       <tbody>
@@ -21,6 +20,7 @@ export const ListProducts = ({list}) => {
             <th scope="row">{product.id}</th>
             <td>{product.producto}</td>
             <td>{product.cantidad}</td>
+            <td>{product.precio}</td>
           </tr>
         ))}
       </tbody>

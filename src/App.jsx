@@ -9,8 +9,8 @@ import { CartContext } from "./context/CartContext";
 function App() {
   const [cart, setCart] = useState([]);
 
-  const AddCart = (id,producto, cantidad) => {
-    const productoAgregado = {id,producto,cantidad};
+  const AddCart = (id,producto, cantidad,precio) => {
+    const productoAgregado = {id,producto,cantidad,precio};
     const newCart = [...cart];
     const hasCart = newCart.find((prod) => prod.id === productoAgregado.id);
 

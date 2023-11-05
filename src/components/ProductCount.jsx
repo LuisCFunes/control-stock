@@ -1,13 +1,14 @@
 import { useEffect,useState,useContext } from "react";
 import { CartContext } from "../context/CartContext";
 
-export default function ProductCount({id, p, c}) {
+export default function ProductCount({id, p, c,pr}) {
 
   const {cart, AddCart} = useContext(CartContext);
   const [cantidadV, setCantidadV] = useState(0);
 
   useEffect(() =>{
     console.log(cart);
+    setCantidadV("");
   }, [cart]);
 
   return (
@@ -30,10 +31,11 @@ export default function ProductCount({id, p, c}) {
               }}
               className="form-control"
               placeholder="15..."
+              value={cantidadV}
             />
             
           </div>
-          <button onClick={() => {AddCart(id,p,+cantidadV)}}>Mandar</button>
+          <button onClick={() => {AddCart(id,p,+cantidadV,pr)}}>Mandar</button>
         </div>
       </div>
     </>
