@@ -1,17 +1,19 @@
 import { useContext } from "react";
 import { ListProducts } from "../components/ListProducts";
 import { CartContext } from "../context/CartContext";
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
 import FechaEmitida from "../utilities/FacturaResultados/FechaEmitida";
 import SubTotal from "../utilities/FacturaResultados/SubTotal";
 import Impuesto15 from "../utilities/FacturaResultados/Impuesto15";
-import { jsPDF } from "jspdf";
-import "jspdf-autotable";
+import Total from "../utilities/FacturaResultados/Total";
 
 export default function Facturar() {
   const { cart } = useContext(CartContext);
   const subTotal = SubTotal();
   const fechaEmitida = FechaEmitida();
   const impuesto15 = Impuesto15(subTotal);
+  const total = Total(subTotal,impuesto15); 
 
   const sendPdf = () => {
     if (cart.length > 0) {
@@ -42,7 +44,7 @@ export default function Facturar() {
           `${item.precio * item.cantidad} Lps`,
         ]),
         theme: "grid",
-        headStyles: { fillColor: "#1F1717" }, // Updated
+        headStyles: { fillColor: "#1F1717" }, 
         margin: { top: 65 },
         tableWidth: "auto",
       });
@@ -79,7 +81,7 @@ export default function Facturar() {
         14,
         doc.autoTable.previous.finalY + 59
       );
-      doc.text(`Total: 0 Lps.`, 14, doc.autoTable.previous.finalY + 66);
+      doc.text(`Total: ${total} Lps.`, 14, doc.autoTable.previous.finalY + 66);
       doc.save("factura.pdf");
       //window.location.reload();
     } else {
