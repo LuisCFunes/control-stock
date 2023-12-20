@@ -7,13 +7,16 @@ import FechaEmitida from "../utilities/FacturaResultados/FechaEmitida";
 import SubTotal from "../utilities/FacturaResultados/SubTotal";
 import Impuesto15 from "../utilities/FacturaResultados/Impuesto15";
 import Total from "../utilities/FacturaResultados/Total";
+import NumeroFactura from "../utilities/FacturaResultados/NumeroFactura";
 
 export default function Facturar() {
   const { cart } = useContext(CartContext);
-  const subTotal = SubTotal();
+  const numeroFactura = NumeroFactura();
   const fechaEmitida = FechaEmitida();
+  const subTotal = SubTotal();
   const impuesto15 = Impuesto15(subTotal);
   const total = Total(subTotal,impuesto15); 
+
 
   const sendPdf = () => {
     if (cart.length > 0) {
@@ -23,7 +26,7 @@ export default function Facturar() {
       doc.text("Industrial de Alimentos E. YL., S.A. de C.V", 14, 17);
       doc.setFontSize(16);
       doc.text("INSUMOS E. Y L.", 85, 25);
-      doc.text("Factura 001-002-01-00067139", 14, 33);
+      doc.text(`Factura ${numeroFactura}`, 14, 33);
       doc.setFontSize(9);
       doc.text("RTN:08019007088535", 14, 40);
       doc.text("CAI: 9ACDC8-FC347E-7B43B8-7790B8-3E2429-99", 14, 45);
