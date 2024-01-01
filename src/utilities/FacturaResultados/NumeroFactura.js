@@ -8,5 +8,5 @@ export default function NumeroFactura() {
     idMaximo = Math.max(...facturas.map((factura) => factura.Id));
   }
   
-  return `000-000-00-${idMaximo + 1}`;
+  return idMaximo + 1;
 }

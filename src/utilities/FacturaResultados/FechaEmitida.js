@@ -1,7 +1,7 @@
 export default function FechaEmitidad() {
   const today = new Date();
-  const formattedDate = `${today.getDate()}/${
+  const formattedDateYear = `${today.getFullYear()}-${
     today.getMonth() + 1
-  }/${today.getFullYear()}`;
-  return formattedDate;
+  }-${today.getDate()}`;
+  return formattedDateYear;
 }
