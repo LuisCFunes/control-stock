@@ -53,35 +53,33 @@ export default function Home() {
       <div className="card text-center">
         <div className="card-body">
           <div className="input-group mb-3">
-            <span className="input-group-text" id="basic-addon1">
+            <label htmlFor="text" className="input-group-text" id="basic-addon1">
               Nombre del Producto:
-            </span>
+            </label>
             <input
               type="text"
+              name="producto"
               onChange={(e) => {
                 setProducto(e.target.value);
               }}
               className="form-control"
               value={producto}
               placeholder="Collar de perlas..."
-              aria-label="Username"
-              aria-describedby="basic-addon1"
             />
           </div>
           <div className="input-group mb-3">
-            <span className="input-group-text" id="basic-addon1">
+            <label htmlFor="number" className="input-group-text" id="basic-addon1">
               Cantidad:
-            </span>
+            </label>
             <input
               type="number"
+              name="cantidad"
               onChange={(e) => {
                 setCantidad(e.target.value);
               }}
               className="form-control"
               value={cantidad}
               placeholder="15..."
-              aria-label="Username"
-              aria-describedby="basic-addon1"
             />
           </div>
         </div>

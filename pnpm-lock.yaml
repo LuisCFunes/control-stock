@@ -17,6 +17,15 @@ dependencies:
   jspdf-autotable:
     specifier: ^3.7.1
     version: 3.7.1(jspdf@2.5.1)
+  number-to-spanish-words:
+    specifier: ^1.1.0
+    version: 1.1.0
+  number-to-words:
+    specifier: ^1.2.4
+    version: 1.2.4
+  numero-a-letras:
+    specifier: ^1.0.6
+    version: 1.0.6
   papaparse:
     specifier: ^5.4.1
     version: 5.4.1
@@ -5071,6 +5080,17 @@ packages:
       source-map: 0.6.1
     dev: false
 
+  /eslint-cli@1.1.1:
+    resolution: {integrity: sha512-Gu+fYzt7M+jIb5szUHLl5Ex0vFY7zErbi78D7ZaaLunvVTxHRvbOlfzmJlIUWsV5WDM4qyu9TD7WnGgDaDgaMA==}
+    hasBin: true
+    dependencies:
+      chalk: 2.4.2
+      debug: 2.6.9
+      resolve: 1.22.8
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
   /eslint-compat-utils@0.1.2(eslint@8.44.0):
     resolution: {integrity: sha512-Jia4JDldWnFNIru1Ehx1H5s9/yxiRHY/TimCuUc0jNexew3cF1gI6CYZil1ociakfWO3rRqFjl1mskBblB3RYg==}
     engines: {node: '>=12'}
@@ -7669,6 +7689,25 @@ packages:
       boolbase: 1.0.0
     dev: false
 
+  /number-to-spanish-words@1.1.0:
+    resolution: {integrity: sha512-INgDbuzLZnf3LokA2CKR91Am4OhINBPCtlrnKxAo+LJ2nIJm232V4Jr1mAg5ne6571ychPbPKGlC51tgzSWuLw==}
+    dependencies:
+      ramda: 0.23.0
+    dev: false
+
+  /number-to-words@1.2.4:
+    resolution: {integrity: sha512-/fYevVkXRcyBiZDg6yzZbm0RuaD6i0qRfn8yr+6D0KgBMOndFPxuW10qCHpzs50nN8qKuv78k8MuotZhcVX6Pw==}
+    dev: false
+
+  /numero-a-letras@1.0.6:
+    resolution: {integrity: sha512-EsjxI+zpWSyC+6X+gpDcK6I12SAy4pZDU8itEyPN1f5taNHIV3k53FBPQJiIXVxIizBskHq6LUzRiODCX92/Lw==}
+    engines: {node: '>=8.0.0', npm: '>=5.7.1'}
+    dependencies:
+      eslint-cli: 1.1.1
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
   /nwsapi@2.2.7:
     resolution: {integrity: sha512-ub5E4+FBPKwAZx0UwIQOjYWGHTEq5sPqHQNRN8Z9e4A7u3Tj1weLJsL59yH9vmvqEtBHaOmT6cYQKIZOxp35FQ==}
     dev: false
@@ -8854,6 +8893,10 @@ packages:
     resolution: {integrity: sha512-Sq4CW4QhwOHE8ucn6J34MqtZCeWFP2aQSmrlroYgqAV1PjStIhJXxYuTgUIfkEk7zTLjmIjLmU5q+fbD1NnOJA==}
     dependencies:
       performance-now: 2.1.0
+    dev: false
+
+  /ramda@0.23.0:
+    resolution: {integrity: sha512-ZEg7VlLXEeDfdkmqGi/12/2n8vNlxdx3iU74GbEP6VN2Udx4jLTn6Fw0jU4sjmvaPKjrIZIYk8HBj7quaie97Q==}
     dev: false
 
   /randombytes@2.1.0:

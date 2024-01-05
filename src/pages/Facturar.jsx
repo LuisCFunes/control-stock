@@ -4,7 +4,6 @@ import { ListProducts } from "../components/ListProducts";
 import { CheckBoxNumber } from "../components/CheckBoxNumber";
 import { CheckBoxText } from "../components/CheckBoxText";
 import { CartContext } from "../context/CartContext";
-//import { useSendData } from "../hooks/useSendData";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 import FechaEmitida from "../utilities/FacturaResultados/FechaEmitida";
@@ -12,6 +11,7 @@ import SubTotal from "../utilities/FacturaResultados/SubTotal";
 import Impuesto15 from "../utilities/FacturaResultados/Impuesto15";
 import Total from "../utilities/FacturaResultados/Total";
 import NumeroFactura from "../utilities/FacturaResultados/NumeroFactura";
+import NumberToWords from "../utilities/Number-to-Words";
 
 export default function Facturar() {
   const { cart } = useContext(CartContext);
@@ -19,19 +19,24 @@ export default function Facturar() {
   const Fecha = FechaEmitida();
   const subTotal = SubTotal();
   const impuesto15 = Impuesto15(subTotal);
-  const [cantidadDescuento, setCantidadDescuento] = useState(0);
-  const [cantidadExonerado, setCantidadExonerado] = useState(0);
-  const [cantidadExento, setCantidadExento] = useState(0);
+  const [cantidades, setCantidades] = useState({
+    cantidadDescuento: 0,
+    cantidadExonerado: 0,
+    cantidadExento: 0,
+    rtnCliente: 0,
+  });
   const [Cliente, setCliente] = useState("Cliente Ordinario");
-  const total = Total(subTotal, impuesto15,cantidadDescuento);
-  
+  const total = Total(subTotal, impuesto15, cantidades.cantidadDescuento);
+  const totalWords = NumberToWords(total);
+
   async function putData() {
-    const datos = {Id,Fecha,Cliente};
+    const datos = { Id, Fecha, Cliente };
+    if (datos.Id === "" && datos.Fecha === "" && datos.Cliente === "") {
+      alert("No hay datos para enviar");
+      return;
+    }
     try {
-      const { error } = await supabase
-        .from("Facturas")
-        .insert(datos)
-        .select();
+      const { error } = await supabase.from("Facturas").insert(datos).select();
       if (error) throw error;
       console.log(datos);
       console.log("Se envió correctamente");
@@ -40,16 +45,11 @@ export default function Facturar() {
     }
   }
 
-  const handleCantidadChangeDescuento = (nuevaCantidad) => {
-    setCantidadDescuento(nuevaCantidad);
-  };
-
-  const handleCantidadChangeExonerado = (nuevaCantidad) => {
-    setCantidadExonerado(nuevaCantidad);
-  };
-
-  const handleCantidadChangeExento = (nuevaCantidad) => {
-    setCantidadExento(nuevaCantidad);
+  const handleCantidad = (identifier, value) => {
+    setCantidades((prevValues) => ({
+      ...prevValues,
+      [identifier]: value,
+    }));
   };
 
   const handleCliente = (nombreCliente) => {
@@ -65,17 +65,16 @@ export default function Facturar() {
       doc.setFontSize(16);
       doc.text("INSUMOS E. Y L.", 85, 25);
       doc.text(`Factura 000-000-00-${Id}`, 14, 33);
+      doc.text("San Pedro Sula,Carretera El Carmen", 100, 33);
       doc.setFontSize(9);
       doc.text("RTN:08019007088535", 14, 40);
       doc.text("CAI: 9ACDC8-FC347E-7B43B8-7790B8-3E2429-99", 14, 45);
-      doc.text("Fecha Limite de Emision: 2023-12-15", 100, 40);
-      doc.text(
-        "Autorizado del: 001-002-01-00062371 al 001-002-01-00072370",
-        100,
-        45
-      );
-      doc.text(`Emitida: ${Fecha}`, 100, 50);
+      doc.text("Factura Original", 100, 40);
+      doc.text(`Fecha emitida: ${Fecha}`, 100, 45);
+      doc.text("Autorizado del: 001-002-01-00062371 al 001-002-01-00072370",100,50);
+      doc.text(`Fecha Limite de Emision: 2023-12-15`, 100, 55);
       doc.text(`Cliente: ${Cliente}`, 14, 50);
+      doc.text(`RTN del cliente: ${cantidades.rtnCliente}`, 14, 55);
       doc.autoTable({
         head: [columns],
         body: cart.map((item) => [
@@ -84,46 +83,47 @@ export default function Facturar() {
           item.cantidad,
           `${item.precio * item.cantidad} Lps`,
         ]),
-        theme: "grid",
+        theme: "plain",
         headStyles: { fillColor: "#1F1717" },
         margin: { top: 65 },
         tableWidth: "auto",
       });
       doc.setFontSize(12);
       doc.text(
-        `Desc. Y Reb Otorgados: ${cantidadDescuento} Lps.`,
+        `Desc. Y Reb Otorgados:`,
         14,
         doc.autoTable.previous.finalY + 10
       );
       doc.text(
-        `Importe Exonerado: ${cantidadExonerado} Lps.`,
-        14,
+        `${cantidades.cantidadDescuento} Lps.`,
+        148,
+        doc.autoTable.previous.finalY + 10
+      );
+      doc.text(`Importe Exonerado:`, 14, doc.autoTable.previous.finalY + 17);
+      doc.text(
+        `${cantidades.cantidadExonerado} Lps.`,
+        148,
         doc.autoTable.previous.finalY + 17
       );
+      doc.text(`Importe Exento:`, 14, doc.autoTable.previous.finalY + 24);
       doc.text(
-        `Importe Exento: ${cantidadExento} Lps.`,
-        14,
+        `${cantidades.cantidadExento} Lps.`,
+        148,
         doc.autoTable.previous.finalY + 24
       );
-      doc.text(
-        `Importe Grabado 15%: ${subTotal} Lps.`,
-        14,
-        doc.autoTable.previous.finalY + 31
-      );
-      doc.text(
-        `Importe Grabado 18%: 0 Lps.`,
-        14,
-        doc.autoTable.previous.finalY + 38
-      );
-      doc.text(
-        `Impuesto 15%: ${impuesto15} Lps.`,
-        14,
-        doc.autoTable.previous.finalY + 45
-      );
-      doc.text(`Impuesto 18%: 0 Lps.`, 14, doc.autoTable.previous.finalY + 52);
-      doc.text(`Total: ${total} Lps.`, 14, doc.autoTable.previous.finalY + 58);
+      doc.text(`Importe Grabado 15%:`, 14, doc.autoTable.previous.finalY + 31);
+      doc.text(`${subTotal} Lps.`, 148, doc.autoTable.previous.finalY + 31);
+      doc.text(`Importe Grabado 18%:`, 14, doc.autoTable.previous.finalY + 38);
+      doc.text(`0 Lps.`, 148, doc.autoTable.previous.finalY + 38);
+      doc.text(`Impuesto 15%:`, 14, doc.autoTable.previous.finalY + 45);
+      doc.text(`${impuesto15} Lps.`, 148, doc.autoTable.previous.finalY + 45);
+      doc.text(`Impuesto 18%:`, 14, doc.autoTable.previous.finalY + 52);
+      doc.text(`0 Lps.`, 148, doc.autoTable.previous.finalY + 52);
+      doc.text(`Total:`, 14, doc.autoTable.previous.finalY + 58);
+      doc.text(`${total} Lps.`, 148, doc.autoTable.previous.finalY + 58);
+      doc.text(`Son: ${totalWords}`, 14, doc.autoTable.previous.finalY + 64);
       doc.save("factura.pdf");
-      window.location.reload();
+      //window.location.reload();
     } else {
       alert("No hay productos para facturar");
     }
@@ -139,22 +139,31 @@ export default function Facturar() {
         />
         <p>Nombre del Cliente: {Cliente}</p>
         <CheckBoxNumber
-          tipo={"Descuento"}
-          onCantidadChange={handleCantidadChangeDescuento}
+          name={"RTN del cliente"}
+          onCantidadChange={handleCantidad}
+          tipo={"rtnCliente"}
         />
-        <p>Cantidad Descuento: {cantidadDescuento}</p>
+        <p>RTN: {cantidades.cantidadDescuento}</p>
+        <CheckBoxNumber
+          name={"Descuento"}
+          onCantidadChange={handleCantidad}
+          tipo={"cantidadDescuento"}
+        />
+        <p>Cantidad Descuento: {cantidades.cantidadDescuento}</p>
 
         <CheckBoxNumber
-          tipo={"Exonerado"}
-          onCantidadChange={handleCantidadChangeExonerado}
+          name={"Exonerado"}
+          onCantidadChange={handleCantidad}
+          tipo={"cantidadExonerado"}
         />
-        <p>Cantidad Exonerado: {cantidadExonerado}</p>
+        <p>Cantidad Exonerado: {cantidades.cantidadExonerado}</p>
 
         <CheckBoxNumber
-          tipo={"Exento"}
-          onCantidadChange={handleCantidadChangeExento}
+          name={"Exento"}
+          onCantidadChange={handleCantidad}
+          tipo={"cantidadExento"}
         />
-        <p>Cantidad Exento: {cantidadExento}</p>
+        <p>Cantidad Exento: {cantidades.cantidadExento}</p>
       </div>
 
       <button

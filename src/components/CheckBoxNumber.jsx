@@ -1,6 +1,7 @@
 import { useState } from "react";
+import redondearDecimales from "../utilities/RedondearNum";
 
-export function CheckBoxNumber({ tipo, onCantidadChange }) {
+export function CheckBoxNumber({ name, onCantidadChange,tipo }) {
   const [isChecked, setisChecked] = useState(false);
   const [cantidad, setCantidad] = useState(0);
 
@@ -8,15 +9,17 @@ export function CheckBoxNumber({ tipo, onCantidadChange }) {
     setisChecked(!isChecked);
     if (!isChecked || !cantidad) {
       setCantidad(0);
-      onCantidadChange(0);
+      onCantidadChange(tipo,0);
     }
   };
 
   const handleCantidadChange = (e) => {
     const nuevaCantidad = parseInt(e.target.value, 10) || 0; 
-    setCantidad(nuevaCantidad);
-    onCantidadChange(nuevaCantidad);
+    setCantidad(redondearDecimales(nuevaCantidad,2));
+    onCantidadChange(tipo,redondearDecimales(nuevaCantidad,2));
   };
+
+  
 
   return (
     <div className="d-flex">
@@ -28,12 +31,12 @@ export function CheckBoxNumber({ tipo, onCantidadChange }) {
           checked={isChecked}
           onChange={handleCheck}
         />
-        <strong>{tipo}</strong>
+        <strong>{name}</strong>
       </label>
 
       {isChecked && (
         <div>
-          <label htmlFor="numberInput"> Ingrese el {tipo}:</label>
+          <label htmlFor="numberInput"> Ingrese el {name}:</label>
           <input 
             type="number" 
             onChange={handleCantidadChange}
