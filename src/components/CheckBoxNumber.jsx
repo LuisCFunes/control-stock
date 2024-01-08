@@ -19,8 +19,6 @@ export function CheckBoxNumber({ name, onCantidadChange,tipo }) {
     onCantidadChange(tipo,redondearDecimales(nuevaCantidad,2));
   };
 
-  
-
   return (
     <div className="d-flex">
       <label htmlFor="checkbox" className="mx-2 p-0 my-auto text-primary">

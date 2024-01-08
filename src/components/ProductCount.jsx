@@ -1,27 +1,28 @@
-import { useEffect,useState,useContext } from "react";
+import { useState,useContext } from "react";
 import { CartContext } from "../context/CartContext";
 
-export default function ProductCount({id, p, c,pr}) {
+export function ProductCount({id, producto, c,precio}) {
 
-  const {cart, AddCart} = useContext(CartContext);
+  const {AddCart} = useContext(CartContext);
   const [cantidadV, setCantidadV] = useState(0);
 
-  useEffect(() =>{
-    console.log(cart);
-    setCantidadV("");
-  }, [cart]);
+  const SentToCart = () =>{
+    AddCart(id,producto,+cantidadV,precio);
+    alert("Se envio los datos al carrito");
+    setCantidadV(0);
+  }
 
   return (
     <>
       <div className="card w-50 mx-auto my-2 text-center">
         <div className="card-body">
           <div className="input-group mb-3">
-            <span className="input-group-text mx-auto fs-4" id="basic-addon1">
-              {p ? p : "No a agregado producto"}
+            <span className="input-group-text mx-auto fs-4">
+              {producto ? producto : "No se ha agregado producto"}
             </span>
           </div>
           <div className="input-group mb-3">
-            <span className="input-group-text" id="basic-addon1">
+            <span className="input-group-text">
               Cantidad a vender:
             </span>
             <input
@@ -35,7 +36,7 @@ export default function ProductCount({id, p, c,pr}) {
             />
             
           </div>
-          <button onClick={() => {AddCart(id,p,+cantidadV,pr)}}>Mandar</button>
+          <button onClick={SentToCart}>Mandar al carrito</button>
         </div>
       </div>
     </>

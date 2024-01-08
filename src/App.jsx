@@ -1,10 +1,10 @@
+import { useState } from "react";
+import Navigation from "./components/Navbar";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { CartContext } from "./context/CartContext";
 import Vender from "./pages/Vender";
 import Home from "./pages/Home";
 import Facturar from "./pages/Facturar";
-import Navigation from "./components/Navbar";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { useState } from "react";
-import { CartContext } from "./context/CartContext";
 
 function App() {
   const [cart, setCart] = useState([]);

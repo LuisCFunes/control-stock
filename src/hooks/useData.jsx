@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabase/client";
-import OrdenarLista from "../utilities/ordenarLista";
+import OrdenarLista from "../utilities/OrdenarLista";
 
 export const useData = () => {
   const [listProducts, setListProducts] = useState([]);

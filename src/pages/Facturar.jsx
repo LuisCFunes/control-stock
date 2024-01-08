@@ -1,17 +1,11 @@
 import { supabase } from "../supabase/client";
 import { useContext, useState } from "react";
-import { ListProducts } from "../components/ListProducts";
-import { CheckBoxNumber } from "../components/CheckBoxNumber";
-import { CheckBoxText } from "../components/CheckBoxText";
+import { ListProducts,CheckBoxNumber,CheckBoxText } from "../components";
+import {FechaEmitida, SubTotal,Impuesto15,Total,NumeroFactura} from "../utilities/FacturaResultados";
 import { CartContext } from "../context/CartContext";
+import NumberToWords from "../utilities/Number-to-Words";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
-import FechaEmitida from "../utilities/FacturaResultados/FechaEmitida";
-import SubTotal from "../utilities/FacturaResultados/SubTotal";
-import Impuesto15 from "../utilities/FacturaResultados/Impuesto15";
-import Total from "../utilities/FacturaResultados/Total";
-import NumeroFactura from "../utilities/FacturaResultados/NumeroFactura";
-import NumberToWords from "../utilities/Number-to-Words";
 
 export default function Facturar() {
   const { cart } = useContext(CartContext);
@@ -31,17 +25,26 @@ export default function Facturar() {
 
   async function putData() {
     const datos = { Id, Fecha, Cliente };
-    if (datos.Id === "" && datos.Fecha === "" && datos.Cliente === "") {
+    if (
+      cart.length > 0 &&
+      datos.Id === "" &&
+      datos.Fecha === "" &&
+      datos.Cliente === ""
+    ) {
       alert("No hay datos para enviar");
       return;
-    }
-    try {
-      const { error } = await supabase.from("Facturas").insert(datos).select();
-      if (error) throw error;
-      console.log(datos);
-      console.log("Se envió correctamente");
-    } catch (error) {
-      console.error("Error de envío", error);
+    } else {
+      try {
+        const { error } = await supabase
+          .from("Facturas")
+          .insert(datos)
+          .select();
+        if (error) throw error;
+        console.log(datos);
+        console.log("Se envió correctamente");
+      } catch (error) {
+        console.error("Error de envío", error);
+      }
     }
   }
 
@@ -71,7 +74,11 @@ export default function Facturar() {
       doc.text("CAI: 9ACDC8-FC347E-7B43B8-7790B8-3E2429-99", 14, 45);
       doc.text("Factura Original", 100, 40);
       doc.text(`Fecha emitida: ${Fecha}`, 100, 45);
-      doc.text("Autorizado del: 001-002-01-00062371 al 001-002-01-00072370",100,50);
+      doc.text(
+        "Autorizado del: 001-002-01-00062371 al 001-002-01-00072370",
+        100,
+        50
+      );
       doc.text(`Fecha Limite de Emision: 2023-12-15`, 100, 55);
       doc.text(`Cliente: ${Cliente}`, 14, 50);
       doc.text(`RTN del cliente: ${cantidades.rtnCliente}`, 14, 55);
@@ -84,7 +91,7 @@ export default function Facturar() {
           `${item.precio * item.cantidad} Lps`,
         ]),
         theme: "plain",
-        headStyles: { fillColor: "#1F1717" },
+        headStyles: { fillColor: "#1F1717",textColor:"white" },
         margin: { top: 65 },
         tableWidth: "auto",
       });
@@ -123,9 +130,10 @@ export default function Facturar() {
       doc.text(`${total} Lps.`, 148, doc.autoTable.previous.finalY + 58);
       doc.text(`Son: ${totalWords}`, 14, doc.autoTable.previous.finalY + 64);
       doc.save("factura.pdf");
-      //window.location.reload();
+      window.location.reload();
     } else {
       alert("No hay productos para facturar");
+      return;
     }
   };
 
@@ -143,7 +151,7 @@ export default function Facturar() {
           onCantidadChange={handleCantidad}
           tipo={"rtnCliente"}
         />
-        <p>RTN: {cantidades.cantidadDescuento}</p>
+        <p>RTN: {cantidades.rtnCliente}</p>
         <CheckBoxNumber
           name={"Descuento"}
           onCantidadChange={handleCantidad}
