@@ -1,7 +1,7 @@
-import { supabase } from "../supabase/client";
 import { useContext, useState } from "react";
 import { ListProducts,CheckBoxNumber,CheckBoxText } from "../components";
 import {FechaEmitida, SubTotal,Impuesto15,Total,NumeroFactura} from "../utilities/FacturaResultados";
+import { useSendData, useUpdate } from "../hooks";
 import { CartContext } from "../context/CartContext";
 import NumberToWords from "../utilities/Number-to-Words";
 import { jsPDF } from "jspdf";
@@ -22,41 +22,32 @@ export default function Facturar() {
   const [Cliente, setCliente] = useState("Cliente Ordinario");
   const total = Total(subTotal, impuesto15, cantidades.cantidadDescuento);
   const totalWords = NumberToWords(total);
+  
+  const handleCliente = (nombreCliente) => {
+    setCliente(nombreCliente);
+  };
 
-  async function putData() {
-    const datos = { Id, Fecha, Cliente };
-    if (
-      cart.length > 0 &&
-      datos.Id === "" &&
-      datos.Fecha === "" &&
-      datos.Cliente === ""
-    ) {
-      alert("No hay datos para enviar");
-      return;
-    } else {
-      try {
-        const { error } = await supabase
-          .from("Facturas")
-          .insert(datos)
-          .select();
-        if (error) throw error;
-        console.log(datos);
-        console.log("Se envió correctamente");
-      } catch (error) {
-        console.error("Error de envío", error);
-      }
+  const { putData } = useSendData(Id, Fecha, Cliente, "Facturas");
+  const { updateData } = useUpdate();
+  
+  const updateCantidad = async () => {
+    for (const item of cart) {
+      const { id, cantidad} = item;
+      await updateData(id, cantidad, "Productos");
     }
-  }
+  };
+  
+  const handleClick = async () => {
+    sendPdf();
+    putData();
+    await updateCantidad();
+  };
 
   const handleCantidad = (identifier, value) => {
     setCantidades((prevValues) => ({
       ...prevValues,
       [identifier]: value,
     }));
-  };
-
-  const handleCliente = (nombreCliente) => {
-    setCliente(nombreCliente);
   };
 
   const sendPdf = () => {
@@ -176,9 +167,7 @@ export default function Facturar() {
 
       <button
         className="d-flex justify-content-center btn btn-primary mx-auto rounded-0"
-        onClick={() => {
-          sendPdf(), putData();
-        }}
+        onClick={handleClick}
       >
         Facturar
       </button>

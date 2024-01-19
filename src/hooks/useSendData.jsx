@@ -1,18 +1,27 @@
 import { supabase } from "../supabase/client";
 
-export const useSendData = ({ nFactura,fecha,cliente, tabla }) => {
+export const useSendData = (Id, Fecha, Cliente,Tabla ) => {
   async function putData() {
-    const datos = {nFactura,fecha,cliente};
-    try {
-      const { error } = await supabase
-        .from(tabla)
-        .insert(datos)
-        .select();
-      if (error) throw error;
-      console.log(datos);
-      console.log("Se envió correctamente");
-    } catch (error) {
-      console.error("Error de envío", error);
+    const datos = { Id, Fecha, Cliente };
+    if (
+      datos.Id === "" &&
+      datos.Fecha === "" &&
+      datos.Cliente === ""
+    ) {
+      alert("No hay datos para enviar");
+      return;
+    } else {
+      try {
+        const { error } = await supabase
+          .from(Tabla)
+          .insert(datos)
+          .select();
+        if (error) throw error;
+        console.log(datos);
+        console.log("Se envió correctamente");
+      } catch (error) {
+        console.error("Error de envío", error);
+      }
     }
   }
 
