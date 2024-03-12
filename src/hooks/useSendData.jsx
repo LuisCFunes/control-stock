@@ -1,12 +1,13 @@
 import { supabase } from "../supabase/client";
 
-export const useSendData = (Id, Fecha, Cliente,Tabla ) => {
+export const useSendData = (Id, Fecha, Cliente,Total,Tabla ) => {
   async function putData() {
-    const datos = { Id, Fecha, Cliente };
+    const datos = { Id, Fecha, Cliente,Total };
     if (
       datos.Id === "" &&
       datos.Fecha === "" &&
-      datos.Cliente === ""
+      datos.Cliente === "" &&
+      datos.Total === ""
     ) {
       alert("No hay datos para enviar");
       return;
@@ -21,6 +22,7 @@ export const useSendData = (Id, Fecha, Cliente,Tabla ) => {
         console.log("Se envió correctamente");
       } catch (error) {
         console.error("Error de envío", error);
+        console.log(datos);
       }
     }
   }

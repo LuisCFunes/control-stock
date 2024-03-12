@@ -7,5 +7,6 @@ export default function SubTotal() {
     (acc, prod) => acc + prod.cantidad * prod.precio,
     0
   );
-  return subtotal;
+  const subtotalConDosDecimales = Math.round(subtotal * 100) / 100;
+  return subtotalConDosDecimales;
 }

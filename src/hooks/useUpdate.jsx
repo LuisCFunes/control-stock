@@ -5,27 +5,35 @@ export const useUpdate = () => {
     try {
       const { data: productoActual, error } = await supabase
         .from(tabla)
-        .select('cantidad')
-        .eq('id', id)
+        .select("cantidad")
+        .eq("id", id)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching product:", error);
+        return;
+      }
 
       if (!productoActual) {
         console.error(`No se encontró el producto con ID ${id}`);
         return;
       }
+
       const cantidadOriginal = productoActual.cantidad;
       const cantidadFinal = cantidadOriginal - nuevaCantidad;
-      const { updateError } = await supabase
+
+      const { error: updateError } = await supabase
         .from(tabla)
         .update({ cantidad: cantidadFinal })
-        .eq('id', id)
-        .select();
+        .eq("id", id);
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        console.error("Error updating product:", updateError);
+      } else {
+        console.log("Product updated successfully");
+      }
     } catch (error) {
-      console.error("Error de actualización", error);
+      console.error("Unexpected error:", error);
     }
   }
 

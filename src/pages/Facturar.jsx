@@ -1,11 +1,17 @@
 import { useContext, useState } from "react";
-import { ListProducts,CheckBoxNumber,CheckBoxText } from "../components";
-import {FechaEmitida, SubTotal,Impuesto15,Total,NumeroFactura} from "../utilities/FacturaResultados";
+import { ListProducts, CheckBoxNumber, CheckBoxText } from "../components";
 import { useSendData, useUpdate } from "../hooks";
 import { CartContext } from "../context/CartContext";
 import NumberToWords from "../utilities/Number-to-Words";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
+import {
+  FechaEmitida,
+  SubTotal,
+  Impuesto15,
+  Total,
+  NumeroFactura,
+} from "../utilities/FacturaResultados";
 
 export default function Facturar() {
   const { cart } = useContext(CartContext);
@@ -20,27 +26,32 @@ export default function Facturar() {
     rtnCliente: 0,
   });
   const [Cliente, setCliente] = useState("Cliente Ordinario");
-  const total = Total(subTotal, impuesto15, cantidades.cantidadDescuento);
-  const totalWords = NumberToWords(total);
-  
+  const totalFactura = Total(subTotal, impuesto15, cantidades.cantidadDescuento);
+  const totalWords = NumberToWords(totalFactura);
+
   const handleCliente = (nombreCliente) => {
     setCliente(nombreCliente);
   };
 
-  const { putData } = useSendData(Id, Fecha, Cliente, "Facturas");
+  const { putData } = useSendData(Id, Fecha, Cliente,totalFactura, "Facturas");
   const { updateData } = useUpdate();
-  
+
   const updateCantidad = async () => {
     for (const item of cart) {
-      const { id, cantidad} = item;
-      await updateData(id, cantidad, "Productos");
+      const { id, cantidad } = item;
+      try {
+        await updateData(id, cantidad, "Productos");
+        console.log(`Updated item with ID ${id} successfully.`);
+      } catch (error) {
+        console.error(`Failed to update item with ID ${id}:`, error);
+      }
     }
   };
-  
+
   const handleClick = async () => {
     sendPdf();
     putData();
-    await updateCantidad();
+    updateCantidad();
   };
 
   const handleCantidad = (identifier, value) => {
@@ -82,7 +93,7 @@ export default function Facturar() {
           `${item.precio * item.cantidad} Lps`,
         ]),
         theme: "plain",
-        headStyles: { fillColor: "#1F1717",textColor:"white" },
+        headStyles: { fillColor: "#1F1717", textColor: "white" },
         margin: { top: 65 },
         tableWidth: "auto",
       });
@@ -118,10 +129,9 @@ export default function Facturar() {
       doc.text(`Impuesto 18%:`, 14, doc.autoTable.previous.finalY + 52);
       doc.text(`0 Lps.`, 148, doc.autoTable.previous.finalY + 52);
       doc.text(`Total:`, 14, doc.autoTable.previous.finalY + 58);
-      doc.text(`${total} Lps.`, 148, doc.autoTable.previous.finalY + 58);
+      doc.text(`${totalFactura} Lps.`, 148, doc.autoTable.previous.finalY + 58);
       doc.text(`Son: ${totalWords}`, 14, doc.autoTable.previous.finalY + 64);
       doc.save("factura.pdf");
-      window.location.reload();
     } else {
       alert("No hay productos para facturar");
       return;
@@ -170,6 +180,12 @@ export default function Facturar() {
         onClick={handleClick}
       >
         Facturar
+      </button>
+      <button
+        className="d-flex justify-content-center btn btn-secondary mx-auto rounded-0"
+        onClick={() => window.location.reload()}
+      >
+        Quitar productos
       </button>
     </>
   );
