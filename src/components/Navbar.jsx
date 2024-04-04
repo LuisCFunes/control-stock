@@ -18,7 +18,9 @@ export default function Navigation() {
           <Nav.Link>
             <Link to="/Facturar">Facturar</Link>
           </Nav.Link>
-          <Nav.Link href="#pricing">Editar</Nav.Link>
+          <Nav.Link>
+            <Link to="/Editar">Editar</Link>
+          </Nav.Link>
         </Nav>
       </Container>
     </Navbar>

@@ -10,7 +10,7 @@ import { useData } from "../hooks/useData";
 export default function Home() {
   const [producto, setProducto] = useState("");
   const [cantidad, setCantidad] = useState(0);
-  const { listProducts, error } = useData();
+  const { listProducts } = useData();
 
   const limpiarInput = () => {
     setProducto("");
@@ -91,7 +91,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <ListProducts list={listProducts} error={error} />
+      <ListProducts list={listProducts} showButtons={false} />
     </main>
   );
 }
