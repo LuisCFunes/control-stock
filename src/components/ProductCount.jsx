@@ -1,16 +1,22 @@
-import { useState,useContext } from "react";
+import { useState, useContext } from "react";
 import { CartContext } from "../context/CartContext";
+import { useData } from "../hooks/useData";
 
-export function ProductCount({id, producto, c,precio}) {
-
-  const {AddCart} = useContext(CartContext);
+export function ProductCount({ id, producto, precio }) {
+  const { listProducts } = useData();
+  const { AddCart } = useContext(CartContext);
   const [cantidadV, setCantidadV] = useState(0);
 
-  const SentToCart = () =>{
-    AddCart(id,producto,+cantidadV,precio);
-    alert("Se envio los datos al carrito");
-    setCantidadV(0);
-  }
+  const SentToCart = () => {
+    const product = listProducts.find((product) => product.id === id);
+    if (product && Number(cantidadV) <= Number(product.cantidad)) {
+      AddCart(id, producto, +cantidadV, precio);
+      alert("Se envió los datos al carrito");
+      setCantidadV(0);
+    } else {
+      alert("La cantidad de productos en stock es insuficiente.");
+    }
+  };
 
   return (
     <>
@@ -22,9 +28,7 @@ export function ProductCount({id, producto, c,precio}) {
             </span>
           </div>
           <div className="input-group mb-3">
-            <span className="input-group-text">
-              Cantidad a vender:
-            </span>
+            <span className="input-group-text">Cantidad a vender:</span>
             <input
               type="number"
               onChange={(e) => {
@@ -34,7 +38,6 @@ export function ProductCount({id, producto, c,precio}) {
               placeholder="15..."
               value={cantidadV}
             />
-            
           </div>
           <button onClick={SentToCart}>Mandar al carrito</button>
         </div>

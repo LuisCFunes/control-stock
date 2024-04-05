@@ -26,19 +26,29 @@ export default function Facturar() {
     rtnCliente: 0,
   });
   const [Cliente, setCliente] = useState("Cliente Ordinario");
-  const totalFactura = Total(subTotal, impuesto15, cantidades.cantidadDescuento);
+  const totalFactura = Total(
+    subTotal,
+    impuesto15,
+    cantidades.cantidadDescuento
+  );
   const totalWords = NumberToWords(totalFactura);
 
   const handleCliente = (nombreCliente) => {
     setCliente(nombreCliente);
   };
 
-  const { putData } = useSendData(Id, Fecha, Cliente,totalFactura, "Facturas");
+  const { putData } = useSendData(Id, Fecha, Cliente, totalFactura, "Facturas");
   const { updateData } = useUpdate();
 
   const updateCantidad = async () => {
     for (const item of cart) {
-      const { id, cantidad } = item;
+      const { id, cantidad, precio } = item;
+      if (cantidad <= 0 || precio <= 0) {
+        console.log(
+          `La cantidad o el precio para el producto con ID ${id} es menor o igual a cero.`
+        );
+        continue;
+      }
       try {
         await updateData(id, cantidad, "Productos");
         console.log(`Updated item with ID ${id} successfully.`);
