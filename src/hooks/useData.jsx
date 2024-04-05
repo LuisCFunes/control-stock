@@ -7,18 +7,34 @@ export const useData = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    async function fetchDataAndSetList() {
+    const fetchAndSetList = async () => {
       try {
         const { data } = await supabase.from("Productos").select("*");
         if (data != null) {
           setListProducts(OrdenarLista(data));
         }
       } catch (error) {
-        setError(error);
+        setError(error.message);
       }
-    }
+    };
 
-    fetchDataAndSetList();
+    const productosChannel = supabase
+      .channel("custom-all-channel")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "Productos" },
+        (payload) => {
+          console.log("Change received:", payload);
+          fetchAndSetList(); 
+        }
+      )
+      .subscribe();
+
+    fetchAndSetList(); 
+
+    return () => {
+      productosChannel.unsubscribe(); 
+    };
   }, []);
 
   return { listProducts, error };

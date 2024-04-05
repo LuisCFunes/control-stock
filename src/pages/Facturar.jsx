@@ -59,6 +59,7 @@ export default function Facturar() {
   };
 
   const handleClick = async () => {
+    alert("Venta realizada");
     sendPdf();
     putData();
     updateCantidad();

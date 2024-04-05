@@ -10,20 +10,23 @@ import { useData } from "../hooks/useData";
 export default function Home() {
   const [producto, setProducto] = useState("");
   const [cantidad, setCantidad] = useState(0);
+  const [precio, setPrecio] = useState(0);
   const { listProducts } = useData();
 
   const limpiarInput = () => {
     setProducto("");
     setCantidad("");
+    setPrecio("");
   };
 
   async function putData() {
     const datos = {
       producto,
       cantidad,
+      precio
     };
 
-    if (datos.producto === "" && datos.cantidad === "") {
+    if (datos.producto === "" && datos.cantidad === "" && datos.precio === "") {
       alert("Llena el formulario");
       return;
     }
@@ -79,6 +82,21 @@ export default function Home() {
               }}
               className="form-control"
               value={cantidad}
+              placeholder="15..."
+            />
+          </div>
+          <div className="input-group mb-3">
+            <label htmlFor="number" className="input-group-text" id="basic-addon1">
+              Precio:
+            </label>
+            <input
+              type="number"
+              name="cantidad"
+              onChange={(e) => {
+                setPrecio(e.target.value);
+              }}
+              className="form-control"
+              value={precio}
               placeholder="15..."
             />
           </div>

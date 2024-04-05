@@ -44,6 +44,10 @@ export default function Editar() {
       alert("Llena el formulario");
       return;
     }
+    if (datos.cantidad < 0 || datos.precio < 0) {
+      alert("No ingrese cantidad o precio menor a cero");
+      return;
+    }
 
     try {
       const { error } = await supabase
