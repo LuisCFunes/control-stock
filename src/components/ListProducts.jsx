@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-export const ListProducts = ({ list, showButtons, handleSendProductData }) => {
+export const ListProducts = ({ list, showButtons, handleSendProductData,scopeName = "Agregar a la venta",btnName = "Vender" }) => {
   if (!list || list.length === 0) {
     return <h1 className="text-center">No hay productos en la lista</h1>;
   }
@@ -13,7 +13,7 @@ export const ListProducts = ({ list, showButtons, handleSendProductData }) => {
             <th scope="col">Producto</th>
             <th scope="col">Cantidad</th>
             <th scope="col">Precio</th>
-            {showButtons && <th scope="col">Agregar a la venta</th>}
+            {showButtons && <th scope="col">{scopeName}</th>}
           </tr>
         </thead>
         <tbody>
@@ -29,7 +29,7 @@ export const ListProducts = ({ list, showButtons, handleSendProductData }) => {
                     className="btn btn-primary btn-sm"
                     onClick={() => handleSendProductData(product)}
                   >
-                    Vender
+                    {btnName}
                   </button>
                 </td>
               )}

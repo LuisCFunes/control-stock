@@ -146,6 +146,8 @@ export default function Editar() {
         list={listProducts}
         showButtons={true}
         handleSendProductData={handleSendProductData}
+        scopeName="Editar Producto"
+        btnName="Editar"
       />
     </main>
   );

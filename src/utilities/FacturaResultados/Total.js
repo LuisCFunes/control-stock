@@ -1,10 +1,12 @@
+import redondearDecimales from "../RedondearNum";
+
 export default function Total(subtotal, impuesto,descuento) {
   let total = subtotal + impuesto;
   if(descuento){
     total = total - descuento;
-    return total; 
+    return redondearDecimales(total,2) ; 
   }else{
-    return total;
+    return redondearDecimales(total,2);
   }
   
 }

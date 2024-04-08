@@ -36,10 +36,10 @@ export default function Facturar() {
   const handleCliente = (nombreCliente) => {
     setCliente(nombreCliente);
   };
-
-  const { putData } = useSendData(Id, Fecha, Cliente, totalFactura, "Facturas");
+  
+  const { putData } = useSendData(Id, Fecha, Cliente, totalFactura, "Facturas",cart);
   const { updateData } = useUpdate();
-
+  
   const updateCantidad = async () => {
     for (const item of cart) {
       const { id, cantidad, precio } = item;
@@ -51,6 +51,7 @@ export default function Facturar() {
       }
       try {
         await updateData(id, cantidad, "Productos");
+        alert("Venta realizada");
         console.log(`Updated item with ID ${id} successfully.`);
       } catch (error) {
         console.error(`Failed to update item with ID ${id}:`, error);
@@ -59,10 +60,9 @@ export default function Facturar() {
   };
 
   const handleClick = async () => {
-    alert("Venta realizada");
     sendPdf();
-    putData();
     updateCantidad();
+    putData();
   };
 
   const handleCantidad = (identifier, value) => {
