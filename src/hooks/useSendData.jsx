@@ -24,6 +24,7 @@ export const useSendData = (Id, Fecha, Cliente,Total,Tabla,ProductosV ) => {
       } catch (error) {
         console.error("Error de envío", error);
         console.log(datos);
+        return;
       }
     }
   }

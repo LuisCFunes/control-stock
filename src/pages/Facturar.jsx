@@ -60,10 +60,15 @@ export default function Facturar() {
   };
 
   const handleClick = async () => {
-    sendPdf();
-    updateCantidad();
-    putData();
+    try {
+      await putData();
+      updateCantidad();
+      sendPdf();
+    } catch (error) {
+      console.error("Error en putData:", error);
+    }
   };
+  
 
   const handleCantidad = (identifier, value) => {
     setCantidades((prevValues) => ({

@@ -6,6 +6,7 @@ import Vender from "./pages/Vender";
 import Home from "./pages/Home";
 import Facturar from "./pages/Facturar";
 import Editar from "./pages/Editar";
+import Reports from "./pages/Reports";
 
 function App() {
   const [cart, setCart] = useState([]);
@@ -33,6 +34,7 @@ function App() {
             <Route path="/Vender" element={<Vender />} />
             <Route path="/Facturar" element={<Facturar />} />
             <Route path="/Editar" element={<Editar />} />
+            <Route path="/Reports" element={<Reports />} />
           </Routes>
         </BrowserRouter>
       </CartContext.Provider>

@@ -21,6 +21,9 @@ export default function Navigation() {
           <Nav.Link>
             <Link to="/Editar">Editar</Link>
           </Nav.Link>
+          <Nav.Link>
+            <Link to="/Reports">Reportes</Link>
+          </Nav.Link>
         </Nav>
       </Container>
     </Navbar>
