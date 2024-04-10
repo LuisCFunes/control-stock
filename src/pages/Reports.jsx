@@ -1,4 +1,4 @@
-import ExportButton from "../components/ExportExcel";
+import { ExportButton } from "../components";
 
 export default function Reports() {
   return (

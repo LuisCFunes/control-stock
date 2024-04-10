@@ -1,5 +1,5 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useState } from "react";
+import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import "../App.css";
@@ -8,39 +8,25 @@ import { supabase } from "../supabase/client";
 import { useData } from "../hooks/useData";
 
 export default function Home() {
-  const [producto, setProducto] = useState("");
-  const [cantidad, setCantidad] = useState(0);
-  const [precio, setPrecio] = useState(0);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
   const { listProducts } = useData();
 
-  const limpiarInput = () => {
-    setProducto("");
-    setCantidad("");
-    setPrecio("");
-  };
-
-  async function putData() {
-    const datos = {
-      producto,
-      cantidad,
-      precio
-    };
-
-    if (datos.producto === "" && datos.cantidad === "" && datos.precio === "") {
-      alert("Llena el formulario");
-      return;
-    }
-
+  const onSubmit = async (data) => {
     try {
-      const { error } = await supabase.from("Productos").insert(datos).select();
+      const { error } = await supabase.from("Productos").insert(data);
       if (error) throw error;
-      limpiarInput();
+
       withReactContent(Swal).fire({
         title: <p>Registro exitoso!</p>,
-        html: `<i>El producto <b>${producto}</b> fue registrado con éxito</i>`,
+        html: `<i>El producto <b>${data.producto}</b> fue registrado con éxito</i>`,
         icon: "success",
       });
-      limpiarInput();
+      reset(); 
     } catch (error) {
       Swal.fire({
         icon: "error",
@@ -49,64 +35,75 @@ export default function Home() {
         footer: JSON.parse(JSON.stringify(error)).message,
       });
     }
-  }
+  };
 
   return (
     <main className="container">
       <div className="card text-center">
         <div className="card-body">
-          <div className="input-group mb-3">
-            <label htmlFor="text" className="input-group-text" id="basic-addon1">
-              Nombre del Producto:
-            </label>
-            <input
-              type="text"
-              name="producto"
-              onChange={(e) => {
-                setProducto(e.target.value);
-              }}
-              className="form-control"
-              value={producto}
-              placeholder="Collar de perlas..."
-            />
-          </div>
-          <div className="input-group mb-3">
-            <label htmlFor="number" className="input-group-text" id="basic-addon1">
-              Cantidad:
-            </label>
-            <input
-              type="number"
-              name="cantidad"
-              onChange={(e) => {
-                setCantidad(e.target.value);
-              }}
-              className="form-control"
-              value={cantidad}
-              placeholder="15..."
-            />
-          </div>
-          <div className="input-group mb-3">
-            <label htmlFor="number" className="input-group-text" id="basic-addon1">
-              Precio:
-            </label>
-            <input
-              type="number"
-              name="cantidad"
-              onChange={(e) => {
-                setPrecio(e.target.value);
-              }}
-              className="form-control"
-              value={precio}
-              placeholder="15..."
-            />
-          </div>
-        </div>
-        <div className="card-footer text-body-secondary">
-          <div>
-            <button className="btn btn-success m-2" onClick={putData}>
-              Registrar
-            </button>
-          </div>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="input-group mb-3">
+              <label
+                htmlFor="producto"
+                className="input-group-text"
+                id="basic-addon1"
+              >
+                Nombre del Producto:
+              </label>
+              <input
+                type="text"
+                {...register("producto", { required: true })}
+                className="form-control"
+                placeholder="Collar de perlas..."
+              />
+              {errors.producto && (
+                <span className="text-danger">Producto requerido</span>
+              )}
+            </div>
+            <div className="input-group mb-3">
+              <label
+                htmlFor="cantidad"
+                className="input-group-text"
+                id="basic-addon1"
+              >
+                Cantidad:
+              </label>
+              <input
+                type="number"
+                {...register("cantidad", { required: true })}
+                className="form-control"
+                placeholder="15..."
+              />
+              {errors.cantidad && (
+                <span className="text-danger">Cantidad requerida</span>
+              )}
+            </div>
+            <div className="input-group mb-3">
+              <label
+                htmlFor="precio"
+                className="input-group-text"
+                id="basic-addon1"
+              >
+                Precio:
+              </label>
+              <input
+                type="number"
+                {...register("precio", { required: true })}
+                className="form-control"
+                placeholder="15..."
+              />
+              {errors.precio && (
+                <span className="text-danger">Precio requerido</span>
+              )}
+            </div>
+            <div className="card-footer text-body-secondary">
+              <div>
+                <button type="submit" className="btn btn-success m-2">
+                  Registrar
+                </button>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
       <ListProducts list={listProducts} showButtons={false} />

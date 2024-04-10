@@ -1,7 +1,7 @@
 import { supabase } from "../supabase/client";
 import * as XLSX from "xlsx";
 
-const ExportButton = ({ tableName, buttonName, columns }) => {
+export function ExportButton({ tableName, buttonName, columns }) {
   const handleExport = async () => {
     const { data, error } = await supabase.from(tableName).select("*");
 
@@ -27,6 +27,4 @@ const ExportButton = ({ tableName, buttonName, columns }) => {
   };
 
   return <button onClick={handleExport}>{buttonName}</button>;
-};
-
-export default ExportButton;
+}
