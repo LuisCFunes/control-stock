@@ -1,11 +1,13 @@
-import { useSendData } from "./useSendData";
-import {useData} from "./useData";
+import { useSendData } from "./useSendDataFacturas";
+import { useData } from "./useData";
 import { useFactura } from "./useFactura";
-import { useUpdate } from "./useUpdate";
+import { useUpdate } from "./useUpdateQuantity"; 
+import { useUpdateData } from "./useUpdateDataProductos";
 
 export {
     useSendData,
     useData,
     useFactura,
-    useUpdate
+    useUpdate,
+    useUpdateData
 }

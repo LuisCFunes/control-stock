@@ -14,7 +14,7 @@ import {
 } from "../utilities/FacturaResultados";
 
 export default function Facturar() {
-  const { cart } = useContext(CartContext);
+  const { cart, clearCart } = useContext(CartContext);
   const Id = NumeroFactura();
   const Fecha = FechaEmitida();
   const subTotal = SubTotal();
@@ -38,7 +38,7 @@ export default function Facturar() {
   };
   
   const { putData } = useSendData(Id, Fecha, Cliente, totalFactura, "Facturas",cart);
-  const { updateData } = useUpdate();
+  const { updateQuantity } = useUpdate();
   
   const updateCantidad = async () => {
     for (const item of cart) {
@@ -50,7 +50,7 @@ export default function Facturar() {
         continue;
       }
       try {
-        await updateData(id, cantidad, "Productos");
+        await updateQuantity(id, cantidad, "Productos");
         alert("Venta realizada");
         console.log(`Updated item with ID ${id} successfully.`);
       } catch (error) {
@@ -64,12 +64,12 @@ export default function Facturar() {
       await putData();
       updateCantidad();
       sendPdf();
+      clearCart(); 
     } catch (error) {
-      console.error("Error en putData:", error);
+      alert("Error:", error);
     }
   };
   
-
   const handleCantidad = (identifier, value) => {
     setCantidades((prevValues) => ({
       ...prevValues,
@@ -196,12 +196,6 @@ export default function Facturar() {
         onClick={handleClick}
       >
         Facturar
-      </button>
-      <button
-        className="d-flex justify-content-center btn btn-secondary mx-auto rounded-0"
-        onClick={() => window.location.reload()}
-      >
-        Quitar productos
       </button>
     </>
   );

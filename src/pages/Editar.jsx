@@ -1,27 +1,17 @@
 import { useState } from "react";
-import { useData } from "../hooks/useData";
-import { supabase } from "../supabase/client";
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
+import { useData } from "../hooks/index";
 import { ListProducts } from "../components";
+import { useUpdateData } from "../hooks/index";
 
 export default function Editar() {
   const { listProducts } = useData();
+  const { updateData } = useUpdateData();
   const [infoProduct, setInfoProduct] = useState({
     id: "",
     producto: "",
     cantidad: 0,
     precio: 0,
   });
-
-  const handleSendProductData = (data) => {
-    setInfoProduct({
-      id: data.id,
-      producto: data.producto,
-      cantidad: Number(data.cantidad),
-      precio: data.precio,
-    });
-  };
 
   const limpiarInput = () => {
     setInfoProduct({
@@ -32,45 +22,19 @@ export default function Editar() {
     });
   };
 
-  async function updateData() {
-    const datos = {
-      producto: infoProduct.producto,
-      cantidad: infoProduct.cantidad,
-      precio: infoProduct.precio,
-      id: infoProduct.id,
-    };
+  const handleSendProductData = (data) => {
+    setInfoProduct({
+      id: data.id,
+      producto: data.producto,
+      cantidad: Number(data.cantidad),
+      precio: data.precio,
+    });
+  };
 
-    if (datos.producto === "" && datos.cantidad === 0 && datos.precio === 0) {
-      alert("Llena el formulario");
-      return;
-    }
-    if (datos.cantidad < 0 || datos.precio < 0) {
-      alert("No ingrese cantidad o precio menor a cero");
-      return;
-    }
-
-    try {
-      const { error } = await supabase
-        .from("Productos")
-        .update(datos)
-        .eq("id", datos.id);
-      if (error) throw error;
-      limpiarInput();
-      withReactContent(Swal).fire({
-        title: <p>Actualización exitosa!</p>,
-        html: `<i>El producto <b>${datos.producto}</b> fue actualizado con éxito</i>`,
-        icon: "success",
-      });
-      limpiarInput();
-    } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "No se logró actualizar el producto!",
-        footer: JSON.parse(JSON.stringify(error)).message,
-      });
-    }
-  }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    updateData(infoProduct, limpiarInput);
+  };
 
   return (
     <main className="container">
@@ -136,7 +100,7 @@ export default function Editar() {
         </div>
         <div className="card-footer text-body-secondary">
           <div>
-            <button className="btn btn-success m-2" onClick={updateData}>
+            <button type="submit" className="btn btn-success m-2" onClick={handleSubmit}>
               Editar
             </button>
           </div>

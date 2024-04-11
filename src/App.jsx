@@ -11,12 +11,12 @@ import Reports from "./pages/Reports";
 function App() {
   const [cart, setCart] = useState([]);
 
-  const AddCart = (id,producto, cantidad,precio) => {
-    const productoAgregado = {id,producto,cantidad,precio};
+  const AddCart = (id, producto, cantidad, precio) => {
+    const productoAgregado = { id, producto, cantidad, precio };
     const newCart = [...cart];
     const hasCart = newCart.find((prod) => prod.id === productoAgregado.id);
 
-    if (hasCart){
+    if (hasCart) {
       hasCart.cantidad += cantidad;
     } else {
       newCart.push(productoAgregado);
@@ -24,9 +24,13 @@ function App() {
     setCart(newCart);
   };
 
+  const clearCart = () => {
+    setCart([]);
+  };
+
   return (
     <>
-      <CartContext.Provider value={{cart, AddCart, setCart}}>
+      <CartContext.Provider value={{ cart, AddCart, setCart, clearCart }}>
         <BrowserRouter>
           <Navigation />
           <Routes>
