@@ -23,7 +23,7 @@ export function ProductCount({ id, producto, precio }) {
       <div className="card w-50 mx-auto my-2 text-center">
         <div className="card-body">
           <div className="input-group mb-3">
-            <span className="input-group-text mx-auto fs-4">
+            <span className="input-group-text mx-auto fs-6">
               {producto ? producto : "No se ha agregado producto"}
             </span>
           </div>

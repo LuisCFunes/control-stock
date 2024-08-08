@@ -8,22 +8,12 @@ export default function Navigation() {
     <Navbar bg="dark" data-bs-theme="dark" className="mb-2">
       <Container>
         <Nav className="me-auto">
-          <Navbar.Brand href="#home">Gestion de inventario</Navbar.Brand>
-          <Nav.Link>
-            <Link to="/">Inicio</Link>
-          </Nav.Link>
-          <Nav.Link>
-            <Link to="/Vender">Vender</Link>
-          </Nav.Link>
-          <Nav.Link>
-            <Link to="/Facturar">Facturar</Link>
-          </Nav.Link>
-          <Nav.Link>
-            <Link to="/Editar">Editar</Link>
-          </Nav.Link>
-          <Nav.Link>
-            <Link to="/Reports">Reportes</Link>
-          </Nav.Link>
+          <Navbar.Brand as={Link} to="/">Gestion de inventario</Navbar.Brand>
+          <Nav.Link as={Link} to="/">Inicio</Nav.Link>
+          <Nav.Link as={Link} to="/Vender">Vender</Nav.Link>
+          <Nav.Link as={Link} to="/Facturar">Facturar</Nav.Link>
+          <Nav.Link as={Link} to="/Editar">Editar</Nav.Link>
+          <Nav.Link as={Link} to="/Reports">Reportes</Nav.Link>
         </Nav>
       </Container>
     </Navbar>

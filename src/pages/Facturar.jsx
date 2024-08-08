@@ -53,6 +53,7 @@ export default function Facturar() {
         await updateQuantity(id, cantidad, "Productos");
         alert("Venta realizada");
         console.log(`Updated item with ID ${id} successfully.`);
+        window.location.reload();
       } catch (error) {
         console.error(`Failed to update item with ID ${id}:`, error);
       }
@@ -65,6 +66,7 @@ export default function Facturar() {
       updateCantidad();
       sendPdf();
       clearCart(); 
+      
     } catch (error) {
       alert("Error:", error);
     }
