@@ -14,6 +14,7 @@ export default function Home() {
     formState: { errors },
     reset,
   } = useForm();
+  
   const { listProducts } = useData();
 
   const onSubmit = async (data) => {

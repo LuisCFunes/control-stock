@@ -1,10 +1,9 @@
-import { supabase } from "../supabase/client";
+import { useData } from "../hooks/useData";
 import * as XLSX from "xlsx";
 
 export function ExportButton({ tableName, buttonName, columns }) {
+  const { listProducts: data, error } = useData();
   const handleExport = async () => {
-    const { data, error } = await supabase.from(tableName).select("*");
-
     if (error) {
       console.error("Error al obtener los datos de Supabase:", error.message);
       return;

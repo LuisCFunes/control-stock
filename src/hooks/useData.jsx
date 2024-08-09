@@ -1,23 +1,29 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "../supabase/client";
 import OrdenarLista from "../utilities/OrdenarLista";
 
 export const useData = () => {
   const [listProducts, setListProducts] = useState([]);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  const fetchingFromProducts = useCallback(async () => {
+    try {
+      const { data, error } = await supabase.from("Productos").select("*");
+      if (error) {
+        throw new Error(error.message);
+      }
+      if (data != null) {
+        setListProducts(OrdenarLista(data));
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    const fetchAndSetList = async () => {
-      try {
-        const { data } = await supabase.from("Productos").select("*");
-        if (data != null) {
-          setListProducts(OrdenarLista(data));
-        }
-      } catch (error) {
-        setError(error.message);
-      }
-    };
-
     const productosChannel = supabase
       .channel("custom-all-channel")
       .on(
@@ -25,17 +31,17 @@ export const useData = () => {
         { event: "*", schema: "public", table: "Productos" },
         (payload) => {
           console.log("Change received:", payload);
-          fetchAndSetList(); 
+          fetchingFromProducts();
         }
       )
       .subscribe();
 
-    fetchAndSetList(); 
+      fetchingFromProducts();
 
     return () => {
-      productosChannel.unsubscribe(); 
+      productosChannel.unsubscribe();
     };
-  }, []);
+  }, [fetchingFromProducts]);
 
-  return { listProducts, error };
+  return { listProducts, error, loading };
 };
