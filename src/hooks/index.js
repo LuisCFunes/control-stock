@@ -9,5 +9,5 @@ export {
     useData,
     useFactura,
     useUpdate,
-    useUpdateData
+    useUpdateData,
 }
